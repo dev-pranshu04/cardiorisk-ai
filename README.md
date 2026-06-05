@@ -3,7 +3,7 @@
 A production-grade ML web app for cardiovascular risk assessment using XGBoost and Logistic Regression, trained on the UCI Heart Disease dataset.
 
 ## 🚀 Live Demo
-Deploy to Streamlit Community Cloud (FREE) — no local setup needed.
+https://cardiorisk-ai-pk04.streamlit.app/
 
 ## 📁 Files
 ```
@@ -13,26 +13,6 @@ heart_disease_app/
 └── README.md         ← This file
 ```
 
-## ⚡ Deploy in 5 Minutes (GitHub + Streamlit Cloud)
-
-### Step 1 — Create GitHub repository
-1. Go to https://github.com → Sign in (or create free account)
-2. Click the **+** icon → **New repository**
-3. Name it: `cardiorisk-ai`
-4. Set to **Public**
-5. Click **Create repository**
-
-### Step 2 — Upload files
-1. Click **Add file** → **Upload files**
-2. Upload `app.py` and `requirements.txt`
-3. Click **Commit changes**
-
-### Step 3 — Deploy on Streamlit
-1. Go to https://streamlit.io/cloud → **Sign in with GitHub**
-2. Click **New app**
-3. Select your `cardiorisk-ai` repo
-4. Main file path: `app.py`
-5. Click **Deploy!** → Your app is LIVE in ~2 minutes 🎉
 
 ## 🧠 How It Works
 
@@ -73,4 +53,4 @@ This app is for **educational and research purposes only**. It is not a certifie
 - **ML**: XGBoost, scikit-learn
 - **Viz**: Matplotlib
 - **Data**: NumPy, Pandas
-- **Deployment**: Streamlit Community Cloud (free)
+- **Deployment**: Streamlit Community Cloud 
