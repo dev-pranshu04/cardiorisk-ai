@@ -7,7 +7,7 @@ import xgboost as xgb
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import roc_auc_score, confusion_matrix, classification_report
+from sklearn.metrics import roc_auc_score, confusion_matrix
 from sklearn.impute import SimpleImputer
 import warnings
 warnings.filterwarnings("ignore")
@@ -20,327 +20,632 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── CSS: dark-mode safe, industry-grade ───────────────────────────────────────
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
-    html, body, [class*="css"] { font-family: 'Space Grotesk', sans-serif; }
-    .risk-low    { background:#d1fae5; color:#065f46; border-radius:12px; padding:20px; text-align:center; font-size:26px; font-weight:700; }
-    .risk-medium { background:#fef3c7; color:#92400e; border-radius:12px; padding:20px; text-align:center; font-size:26px; font-weight:700; }
-    .risk-high   { background:#fee2e2; color:#991b1b; border-radius:12px; padding:20px; text-align:center; font-size:26px; font-weight:700; }
-    .metric-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 18px; margin:6px 0; }
-    .stButton > button { background:#1e3a5f; color:white; border:none; border-radius:8px; padding:10px 28px; font-weight:600; width:100%; font-size:16px; }
-    .stButton > button:hover { background:#2563eb; }
-    h1 { color: #1e3a5f !important; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"], .stApp {
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Hero banner ── */
+.hero-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1d4ed8 100%);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    color: white;
+}
+.hero-banner h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: white !important;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+.hero-banner p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    margin: 0;
+}
+.hero-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+.hero-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+/* ── KPI cards ── */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.kpi-card {
+    background: #1e3a8a;
+    border: 1px solid #2563eb;
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-align: center;
+}
+.kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #60a5fa;
+    line-height: 1.1;
+}
+.kpi-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── Section headers ── */
+.section-header {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #60a5fa;
+    margin: 0 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(96,165,250,0.25);
+}
+
+/* ── Model cards ── */
+.model-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.model-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 16px 18px;
+}
+.model-card.primary {
+    border-color: #2563eb;
+    background: #0f2851;
+}
+.model-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.model-auc {
+    font-size: 22px;
+    font-weight: 700;
+    color: #60a5fa;
+}
+.model-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+.badge-primary {
+    background: #1d4ed8;
+    color: #bfdbfe;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* ── Risk output ── */
+.risk-box {
+    border-radius: 14px;
+    padding: 24px 28px;
+    text-align: center;
+    margin: 16px 0;
+}
+.risk-box.low    { background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid #10b981; }
+.risk-box.medium { background: linear-gradient(135deg, #78350f, #92400e); border: 1px solid #f59e0b; }
+.risk-box.high   { background: linear-gradient(135deg, #7f1d1d, #991b1b); border: 1px solid #ef4444; }
+.risk-box .risk-pct {
+    font-size: 48px;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+}
+.risk-box .risk-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    margin-top: 6px;
+}
+.risk-box .risk-advice {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+/* ── Info panel ── */
+.info-panel {
+    background: #0f172a;
+    border: 1px solid #1e3a8a;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+}
+.info-panel p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+}
+.info-panel strong {
+    color: #e2e8f0;
+}
+
+/* ── Prob bar ── */
+.prob-bar-wrap { margin: 12px 0; }
+.prob-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+.prob-bar-label span:last-child { color: #60a5fa; font-weight: 600; }
+.prob-bar-bg {
+    background: #1e293b;
+    border-radius: 6px;
+    height: 8px;
+    overflow: hidden;
+}
+.prob-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+}
+
+/* ── Data table ── */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.summary-table th {
+    background: #1e3a8a;
+    color: #bfdbfe;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.summary-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #1e293b;
+    color: #e2e8f0;
+}
+.summary-table tr:hover td { background: #1e293b; }
+
+/* ── Sidebar ── */
+[data-testid="stSidebar"] {
+    background: #0a0f1e !important;
+    border-right: 1px solid #1e293b;
+}
+[data-testid="stSidebar"] .stSlider label,
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stRadio label {
+    color: #94a3b8 !important;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ── Predict button ── */
+.stButton > button {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 28px !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    width: 100% !important;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 15px rgba(37,99,235,0.4);
+}
+.stButton > button:hover {
+    background: linear-gradient(135deg, #1e40af, #1d4ed8) !important;
+    box-shadow: 0 6px 20px rgba(37,99,235,0.5);
+}
+
+/* ── Divider ── */
+hr { border-color: #1e293b !important; margin: 20px 0; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Load & preprocess REAL dataset ─────────────────────────────────────────────
+# ── Load & preprocess REAL dataset ────────────────────────────────────────────
 @st.cache_data
 def load_data():
     df = pd.read_csv("heart_disease_uci.csv")
-
-    # Binary target: 0 = no disease, 1 = disease present (num > 0)
     df["target"] = (df["num"] > 0).astype(int)
-
-    # Encode categorical columns
     df["sex_enc"]     = (df["sex"] == "Male").astype(int)
-    df["cp_enc"]      = df["cp"].map({
-        "typical angina": 0, "atypical angina": 1,
-        "non-anginal": 2, "asymptomatic": 3
-    })
+    df["cp_enc"]      = df["cp"].map({"typical angina": 0, "atypical angina": 1, "non-anginal": 2, "asymptomatic": 3})
     df["fbs_enc"]     = df["fbs"].map({True: 1, False: 0, "True": 1, "False": 0})
-    df["restecg_enc"] = df["restecg"].map({
-        "normal": 0, "st-t abnormality": 1, "lv hypertrophy": 2
-    })
+    df["restecg_enc"] = df["restecg"].map({"normal": 0, "st-t abnormality": 1, "lv hypertrophy": 2})
     df["exang_enc"]   = df["exang"].map({True: 1, False: 0, "True": 1, "False": 0})
     df["slope_enc"]   = df["slope"].map({"upsloping": 0, "flat": 1, "downsloping": 2})
     df["thal_enc"]    = df["thal"].map({"normal": 1, "fixed defect": 2, "reversable defect": 3})
-
-    features = ["age", "sex_enc", "cp_enc", "trestbps", "chol",
-                "fbs_enc", "restecg_enc", "thalch", "exang_enc",
-                "oldpeak", "slope_enc", "ca", "thal_enc"]
-
+    features = ["age","sex_enc","cp_enc","trestbps","chol","fbs_enc","restecg_enc",
+                "thalch","exang_enc","oldpeak","slope_enc","ca","thal_enc"]
     X = df[features]
     y = df["target"]
-
-    # Impute missing values with median
     imputer = SimpleImputer(strategy="median")
-    X_imputed = pd.DataFrame(imputer.fit_transform(X), columns=features)
-
-    return df, X_imputed, y, features, imputer
+    X_imp = pd.DataFrame(imputer.fit_transform(X), columns=features)
+    return df, X_imp, y, features, imputer
 
 @st.cache_resource
 def train_models(_X, _y):
-    X_train, X_test, y_train, y_test = train_test_split(
-        _X, _y, test_size=0.2, random_state=42, stratify=_y
-    )
-
+    X_tr, X_te, y_tr, y_te = train_test_split(_X, _y, test_size=0.2, random_state=42, stratify=_y)
     scaler = StandardScaler()
-    X_train_s = scaler.fit_transform(X_train)
-    X_test_s  = scaler.transform(X_test)
-
-    # Logistic Regression
+    X_tr_s, X_te_s = scaler.fit_transform(X_tr), scaler.transform(X_te)
     lr = LogisticRegression(max_iter=1000, C=0.5, random_state=42)
-    lr.fit(X_train_s, y_train)
-    lr_auc = roc_auc_score(y_test, lr.predict_proba(X_test_s)[:, 1])
-
-    # XGBoost
-    scale_pos = (y_train == 0).sum() / (y_train == 1).sum()
-    xgb_m = xgb.XGBClassifier(
-        n_estimators=200, max_depth=4, learning_rate=0.05,
-        subsample=0.8, colsample_bytree=0.8,
-        scale_pos_weight=scale_pos,
-        use_label_encoder=False, eval_metric="logloss",
-        random_state=42
-    )
-    xgb_m.fit(X_train, y_train)
-    xgb_auc = roc_auc_score(y_test, xgb_m.predict_proba(X_test)[:, 1])
-
-    # Cross-val AUC
+    lr.fit(X_tr_s, y_tr)
+    lr_auc = roc_auc_score(y_te, lr.predict_proba(X_te_s)[:,1])
+    spos = (y_tr==0).sum()/(y_tr==1).sum()
+    xgb_m = xgb.XGBClassifier(n_estimators=200, max_depth=4, learning_rate=0.05,
+        subsample=0.8, colsample_bytree=0.8, scale_pos_weight=spos,
+        use_label_encoder=False, eval_metric="logloss", random_state=42)
+    xgb_m.fit(X_tr, y_tr)
+    xgb_auc = roc_auc_score(y_te, xgb_m.predict_proba(X_te)[:,1])
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    xgb_cv = cross_val_score(xgb_m, _X, _y, cv=cv, scoring="roc_auc").mean()
-
-    return lr, xgb_m, scaler, lr_auc, xgb_auc, xgb_cv, X_test, y_test, scaler.transform(X_test)
+    cv_auc = cross_val_score(xgb_m, _X, _y, cv=cv, scoring="roc_auc").mean()
+    return lr, xgb_m, scaler, lr_auc, xgb_auc, cv_auc, X_te, y_te, X_te_s
 
 df_raw, X, y, features, imputer = load_data()
 lr_model, xgb_model, scaler, lr_auc, xgb_auc, xgb_cv, X_test, y_test, X_test_s = train_models(X, y)
 
-FEATURE_LABELS = {
-    "age": "Age", "sex_enc": "Sex", "cp_enc": "Chest Pain Type",
-    "trestbps": "Resting BP", "chol": "Cholesterol",
-    "fbs_enc": "Fasting Blood Sugar", "restecg_enc": "Resting ECG",
-    "thalch": "Max Heart Rate", "exang_enc": "Exercise Angina",
-    "oldpeak": "ST Depression", "slope_enc": "ST Slope",
-    "ca": "Major Vessels", "thal_enc": "Thalassemia"
+FEAT_LABELS = {
+    "age":"Age","sex_enc":"Sex","cp_enc":"Chest Pain","trestbps":"Resting BP",
+    "chol":"Cholesterol","fbs_enc":"Fasting BS","restecg_enc":"Resting ECG",
+    "thalch":"Max Heart Rate","exang_enc":"Exercise Angina","oldpeak":"ST Depression",
+    "slope_enc":"ST Slope","ca":"Major Vessels","thal_enc":"Thalassemia"
 }
 
+# ── matplotlib dark theme ──────────────────────────────────────────────────────
+plt.rcParams.update({
+    "figure.facecolor":  "#0f172a",
+    "axes.facecolor":    "#0f172a",
+    "axes.edgecolor":    "#334155",
+    "axes.labelcolor":   "#94a3b8",
+    "xtick.color":       "#64748b",
+    "ytick.color":       "#64748b",
+    "text.color":        "#e2e8f0",
+    "grid.color":        "#1e293b",
+    "grid.linewidth":    0.6,
+})
+
+BLUE  = "#3b82f6"
+RED   = "#ef4444"
+GREEN = "#10b981"
+AMBER = "#f59e0b"
+
 # ── Sidebar ────────────────────────────────────────────────────────────────────
-st.sidebar.title("🫀 Patient Vitals")
-st.sidebar.caption(f"Model trained on {len(df_raw)} real UCI patients")
-st.sidebar.markdown("---")
+with st.sidebar:
+    st.markdown("""
+    <div style='text-align:center; padding: 10px 0 20px 0;'>
+        <div style='font-size:36px'>🫀</div>
+        <div style='font-size:16px; font-weight:700; color:#e2e8f0;'>CardioRisk AI</div>
+        <div style='font-size:11px; color:#64748b; margin-top:4px;'>Patient Input Panel</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-age      = st.sidebar.slider("Age", int(df_raw.age.min()), int(df_raw.age.max()), 54)
-sex      = st.sidebar.selectbox("Sex", ["Male", "Female"])
-cp       = st.sidebar.selectbox("Chest Pain Type", [
-    "Asymptomatic", "Typical Angina", "Atypical Angina", "Non-Anginal"])
-trestbps = st.sidebar.slider("Resting Blood Pressure (mmHg)", 90, 200, 130)
-chol     = st.sidebar.slider("Cholesterol (mg/dL)", 100, 600, 240)
-fbs      = st.sidebar.radio("Fasting Blood Sugar > 120 mg/dL", ["No", "Yes"])
-restecg  = st.sidebar.selectbox("Resting ECG", ["Normal", "ST-T Abnormality", "LV Hypertrophy"])
-thalch   = st.sidebar.slider("Max Heart Rate Achieved", 70, 210, 150)
-exang    = st.sidebar.radio("Exercise-Induced Angina", ["No", "Yes"])
-oldpeak  = st.sidebar.slider("ST Depression (Oldpeak)", 0.0, 6.5, 1.0, 0.1)
-slope    = st.sidebar.selectbox("ST Slope", ["Upsloping", "Flat", "Downsloping"])
-ca       = st.sidebar.slider("Major Vessels Coloured (0–3)", 0, 3, 0)
-thal     = st.sidebar.selectbox("Thalassemia", ["Normal", "Fixed Defect", "Reversable Defect"])
+    age      = st.slider("Age (years)", int(df_raw.age.min()), int(df_raw.age.max()), 54)
+    sex      = st.selectbox("Sex", ["Male", "Female"])
+    cp       = st.selectbox("Chest Pain Type", ["Asymptomatic","Typical Angina","Atypical Angina","Non-Anginal"])
+    trestbps = st.slider("Resting BP (mmHg)", 90, 200, 130)
+    chol     = st.slider("Cholesterol (mg/dL)", 100, 600, 240)
+    fbs      = st.radio("Fasting Blood Sugar > 120 mg/dL", ["No","Yes"], horizontal=True)
+    restecg  = st.selectbox("Resting ECG", ["Normal","ST-T Abnormality","LV Hypertrophy"])
+    thalch   = st.slider("Max Heart Rate", 70, 210, 150)
+    exang    = st.radio("Exercise-Induced Angina", ["No","Yes"], horizontal=True)
+    oldpeak  = st.slider("ST Depression (Oldpeak)", 0.0, 6.5, 1.0, 0.1)
+    slope    = st.selectbox("ST Slope", ["Upsloping","Flat","Downsloping"])
+    ca       = st.slider("Major Vessels (0–3)", 0, 3, 0)
+    thal     = st.selectbox("Thalassemia", ["Normal","Fixed Defect","Reversable Defect"])
 
-predict_btn = st.sidebar.button("🔍 Predict Risk")
+    st.markdown("<br>", unsafe_allow_html=True)
+    predict_btn = st.button("🔍  Predict Cardiac Risk")
+    st.markdown(f"<div style='font-size:11px;color:#475569;text-align:center;margin-top:12px;'>Model trained on {len(df_raw)} UCI patients</div>", unsafe_allow_html=True)
 
 def encode_inputs():
-    cp_map = {"Typical Angina": 0, "Atypical Angina": 1, "Non-Anginal": 2, "Asymptomatic": 3}
-    ecg_map = {"Normal": 0, "ST-T Abnormality": 1, "LV Hypertrophy": 2}
-    slope_map = {"Upsloping": 0, "Flat": 1, "Downsloping": 2}
-    thal_map = {"Normal": 1, "Fixed Defect": 2, "Reversable Defect": 3}
-    return pd.DataFrame([[
-        age,
-        1 if sex == "Male" else 0,
-        cp_map[cp],
-        trestbps, chol,
-        1 if fbs == "Yes" else 0,
-        ecg_map[restecg],
-        thalch,
-        1 if exang == "Yes" else 0,
-        oldpeak,
-        slope_map[slope],
-        ca,
-        thal_map[thal]
-    ]], columns=features)
+    cp_map    = {"Typical Angina":0,"Atypical Angina":1,"Non-Anginal":2,"Asymptomatic":3}
+    ecg_map   = {"Normal":0,"ST-T Abnormality":1,"LV Hypertrophy":2}
+    slope_map = {"Upsloping":0,"Flat":1,"Downsloping":2}
+    thal_map  = {"Normal":1,"Fixed Defect":2,"Reversable Defect":3}
+    return pd.DataFrame([[age, 1 if sex=="Male" else 0, cp_map[cp], trestbps, chol,
+        1 if fbs=="Yes" else 0, ecg_map[restecg], thalch, 1 if exang=="Yes" else 0,
+        oldpeak, slope_map[slope], ca, thal_map[thal]]], columns=features)
 
-# ── Main ───────────────────────────────────────────────────────────────────────
-st.title("🫀 CardioRisk AI — Heart Disease Risk Predictor")
-st.markdown(f"*Trained on **{len(df_raw)} real UCI Heart Disease patients** (Cleveland · VA · Hungarian · Switzerland)*")
-st.markdown("---")
+# ── MAIN ───────────────────────────────────────────────────────────────────────
+# Hero
+st.markdown(f"""
+<div class="hero-banner">
+    <h1>🫀 CardioRisk AI</h1>
+    <p>Heart Disease Risk Predictor — XGBoost + Logistic Regression Ensemble</p>
+    <div class="hero-badges">
+        <span class="hero-badge">UCI Heart Disease Dataset</span>
+        <span class="hero-badge">920 Real Patients</span>
+        <span class="hero-badge">AUC-ROC {xgb_auc:.3f}</span>
+        <span class="hero-badge">4 Clinical Sites</span>
+        <span class="hero-badge">Educational Use Only</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([1.1, 1.3, 0.9])
+# KPI row
+disease_pct = y.mean() * 100
+st.markdown(f"""
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-value">{len(df_raw)}</div>
+        <div class="kpi-label">Total Patients</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">{xgb_auc:.3f}</div>
+        <div class="kpi-label">XGBoost AUC-ROC</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">{xgb_cv:.3f}</div>
+        <div class="kpi-label">5-Fold CV AUC</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">{disease_pct:.0f}%</div>
+        <div class="kpi-label">Disease Prevalence</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ── Dashboard row 1: Models | Charts | Info ────────────────────────────────────
+col1, col2, col3 = st.columns([1, 1.6, 1])
 
 with col1:
-    st.subheader("📊 Model Performance")
+    st.markdown('<p class="section-header">Model Performance</p>', unsafe_allow_html=True)
     st.markdown(f"""
-    <div class="metric-card">
-        <b>XGBoost</b> ⭐ Primary<br>
-        AUC-ROC: <b>{xgb_auc:.3f}</b> &nbsp;|&nbsp; 5-Fold CV: <b>{xgb_cv:.3f}</b>
+    <div class="model-card primary" style="margin-bottom:10px;">
+        <div class="model-card-name">XGBoost <span class="badge-primary">PRIMARY</span></div>
+        <div class="model-auc">{xgb_auc:.3f}</div>
+        <div class="model-sub">AUC-ROC &nbsp;·&nbsp; 5-Fold CV: {xgb_cv:.3f}</div>
+        <div class="model-sub" style="margin-top:6px;">Weight in ensemble: 65%</div>
     </div>
-    <div class="metric-card">
-        <b>Logistic Regression</b><br>
-        AUC-ROC: <b>{lr_auc:.3f}</b>
-    </div>
-    <div class="metric-card">
-        Training: <b>{int(len(X)*0.8)}</b> patients &nbsp;|&nbsp; Test: <b>{int(len(X)*0.2)}</b><br>
-        Disease prevalence: <b>{y.mean()*100:.1f}%</b>
+    <div class="model-card">
+        <div class="model-card-name">Logistic Regression</div>
+        <div class="model-auc">{lr_auc:.3f}</div>
+        <div class="model-sub">AUC-ROC &nbsp;·&nbsp; Interpretable baseline</div>
+        <div class="model-sub" style="margin-top:6px;">Weight in ensemble: 35%</div>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
-    st.subheader("🧬 Dataset Overview")
-    fig, axes = plt.subplots(1, 3, figsize=(8, 3))
+    st.markdown('<p class="section-header">Dataset Overview</p>', unsafe_allow_html=True)
+    fig, axes = plt.subplots(1, 3, figsize=(9, 3.2))
 
     # Class balance
-    vals = df_raw["target"].value_counts()
-    axes[0].pie(vals, labels=["Disease", "No Disease"] if vals.index[0]==1 else ["No Disease","Disease"],
-                colors=["#ef4444","#3b82f6"] if vals.index[0]==1 else ["#3b82f6","#ef4444"],
-                autopct="%1.0f%%", startangle=90, textprops={"fontsize":8})
-    axes[0].set_title("Class Balance", fontsize=9, fontweight="bold")
+    vals = y.value_counts().sort_index()
+    axes[0].pie([vals[0], vals[1]], labels=["No Disease","Disease"],
+                colors=[BLUE, RED], autopct="%1.0f%%", startangle=90,
+                textprops={"fontsize":8, "color":"#e2e8f0"},
+                wedgeprops={"linewidth":2,"edgecolor":"#0f172a"})
+    axes[0].set_title("Class Balance", fontsize=9, fontweight="600", color="#e2e8f0")
 
-    # Age distribution by class
-    axes[1].hist(df_raw[df_raw["target"]==0]["age"], bins=15, alpha=0.6, color="#3b82f6", label="No Disease")
-    axes[1].hist(df_raw[df_raw["target"]==1]["age"], bins=15, alpha=0.6, color="#ef4444", label="Disease")
-    axes[1].set_title("Age by Outcome", fontsize=9, fontweight="bold")
-    axes[1].legend(fontsize=7)
-    axes[1].tick_params(labelsize=7)
+    # Age by outcome
+    axes[1].hist(df_raw[df_raw["target"]==0]["age"], bins=18, alpha=0.75, color=BLUE, label="No Disease")
+    axes[1].hist(df_raw[df_raw["target"]==1]["age"], bins=18, alpha=0.75, color=RED, label="Disease")
+    axes[1].set_title("Age by Outcome", fontsize=9, fontweight="600", color="#e2e8f0")
+    axes[1].set_xlabel("Age", fontsize=8); axes[1].legend(fontsize=7)
+    axes[1].grid(axis="y", alpha=0.4)
 
-    # Dataset source breakdown
+    # Source sites
     src = df_raw["dataset"].value_counts()
-    axes[2].bar(src.index, src.values, color=["#3b82f6","#10b981","#f59e0b","#8b5cf6"], edgecolor="white")
-    axes[2].set_title("Source Sites", fontsize=9, fontweight="bold")
-    axes[2].tick_params(axis='x', labelsize=6, rotation=15)
-    axes[2].tick_params(axis='y', labelsize=7)
+    bars = axes[2].bar(src.index, src.values,
+                       color=[BLUE, GREEN, AMBER, "#8b5cf6"][:len(src)],
+                       edgecolor="#0f172a", linewidth=1.5, width=0.55)
+    axes[2].set_title("Source Sites", fontsize=9, fontweight="600", color="#e2e8f0")
+    axes[2].tick_params(axis="x", rotation=20, labelsize=7)
+    axes[2].grid(axis="y", alpha=0.4)
+    for bar in bars:
+        axes[2].text(bar.get_x()+bar.get_width()/2, bar.get_height()+3,
+                     str(int(bar.get_height())), ha="center", fontsize=8, color="#94a3b8")
 
-    for ax in axes:
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-    plt.tight_layout()
-    st.pyplot(fig)
+    for ax in axes: ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
+    plt.tight_layout(pad=1.2)
+    st.pyplot(fig, use_container_width=True)
     plt.close()
 
 with col3:
-    st.subheader("ℹ️ Instructions")
-    st.info("1. Fill patient vitals in the **sidebar**\n2. Click **Predict Risk**\n3. Review risk score + feature importance")
-    st.warning("⚠️ Educational use only — not a clinical tool.")
+    st.markdown('<p class="section-header">Quick Reference</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="info-panel">
+        <p>
+        <strong>How to use:</strong><br>
+        Fill all patient vitals in the sidebar, then click <strong>Predict Cardiac Risk</strong>.<br><br>
+        <strong>Features:</strong> 13 clinical variables from the UCI Heart Disease dataset, covering demographics, vitals, ECG findings, and stress test results.<br><br>
+        <strong>Missing data:</strong> Median imputation applied (ca: 66%, thal: 53%, slope: 34% missing).
+        </p>
+    </div>
+    <div class="info-panel" style="border-color:#7f1d1d; background:#1c0a0a;">
+        <p style="color:#fca5a5;">
+        ⚠️ <strong style="color:#f87171;">Not a clinical tool.</strong><br>
+        For research & educational purposes only. Do not use for clinical decisions.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    missing_pct = (df_raw[["ca","thal","slope"]].isnull().sum() / len(df_raw) * 100)
-    st.caption(f"Missing data handled via median imputation.\nca: {missing_pct['ca']:.0f}% | thal: {missing_pct['thal']:.0f}% | slope: {missing_pct['slope']:.0f}%")
+st.markdown("<hr>", unsafe_allow_html=True)
 
-st.markdown("---")
-
-# ── Prediction ─────────────────────────────────────────────────────────────────
+# ── PREDICTION OUTPUT ──────────────────────────────────────────────────────────
 if predict_btn:
-    X_in = encode_inputs()
-
-    # Impute (in case any median fill needed — consistent with training)
+    X_in     = encode_inputs()
     X_in_imp = pd.DataFrame(imputer.transform(X_in), columns=features)
-
     xgb_prob = xgb_model.predict_proba(X_in_imp)[0][1]
     lr_prob  = lr_model.predict_proba(scaler.transform(X_in_imp))[0][1]
     ens_prob = xgb_prob * 0.65 + lr_prob * 0.35
 
-    c1, c2, c3 = st.columns(3)
-    c1.metric("XGBoost", f"{xgb_prob*100:.1f}%")
-    c2.metric("Logistic Regression", f"{lr_prob*100:.1f}%")
-    c3.metric("Ensemble Score", f"{ens_prob*100:.1f}%")
-
     if ens_prob < 0.30:
-        label, css, advice = "🟢 LOW RISK", "risk-low", "Routine monitoring recommended. Maintain healthy lifestyle."
+        risk_cls, risk_lbl, advice = "low", "🟢 LOW RISK", "Routine monitoring recommended. Maintain a healthy lifestyle with regular exercise and balanced diet."
     elif ens_prob < 0.60:
-        label, css, advice = "🟡 MODERATE RISK", "risk-medium", "Further evaluation advised. Consider stress test & lipid panel."
+        risk_cls, risk_lbl, advice = "medium", "🟡 MODERATE RISK", "Further evaluation strongly advised. Consider stress test, lipid panel, and echocardiogram."
     else:
-        label, css, advice = "🔴 HIGH RISK", "risk-high", "Immediate cardiology referral strongly recommended."
+        risk_cls, risk_lbl, advice = "high", "🔴 HIGH RISK", "Immediate cardiology referral recommended. Urgent evaluation and intervention may be required."
 
-    st.markdown(f'<div class="{css}">{label} — {ens_prob*100:.1f}%</div>', unsafe_allow_html=True)
-    st.markdown(f"**Clinical note:** {advice}")
-    st.markdown("---")
+    r1, r2 = st.columns([1, 1.8])
 
-    # Feature importance
-    st.subheader("🔬 Feature Importance (XGBoost — trained on your data)")
-    imp = xgb_model.feature_importances_
-    fi = pd.DataFrame({"Feature": [FEATURE_LABELS[f] for f in features], "Importance": imp}).sort_values("Importance", ascending=True)
+    with r1:
+        st.markdown('<p class="section-header">Risk Assessment</p>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="risk-box {risk_cls}">
+            <div class="risk-pct">{ens_prob*100:.1f}%</div>
+            <div class="risk-label">{risk_lbl}</div>
+            <div class="risk-advice">{advice}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    fig2, ax = plt.subplots(figsize=(9, 5))
-    colors = ["#ef4444" if v > 0.09 else "#3b82f6" for v in fi["Importance"]]
-    bars = ax.barh(fi["Feature"], fi["Importance"], color=colors, edgecolor="white", linewidth=0.5, height=0.65)
-    ax.set_xlabel("Importance Score", fontsize=11)
-    ax.set_title("Which clinical features drive this model's predictions?", fontsize=12, fontweight="bold", pad=12)
-    ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
-    for bar, val in zip(bars, fi["Importance"]):
-        ax.text(val + 0.002, bar.get_y() + bar.get_height()/2, f"{val:.3f}", va="center", fontsize=9)
-    p1 = mpatches.Patch(color="#ef4444", label="High importance (>9%)")
-    p2 = mpatches.Patch(color="#3b82f6", label="Standard importance")
-    ax.legend(handles=[p1, p2], fontsize=9, loc="lower right")
-    plt.tight_layout()
-    st.pyplot(fig2)
-    plt.close()
+        # Model probability bars
+        st.markdown("""
+        <div class="info-panel" style="margin-top:14px;">
+        """, unsafe_allow_html=True)
+        for name, prob, color in [("XGBoost", xgb_prob, "#3b82f6"), ("Logistic Regression", lr_prob, "#8b5cf6"), ("Ensemble", ens_prob, "#10b981")]:
+            st.markdown(f"""
+            <div class="prob-bar-wrap">
+                <div class="prob-bar-label"><span>{name}</span><span>{prob*100:.1f}%</span></div>
+                <div class="prob-bar-bg"><div class="prob-bar-fill" style="width:{prob*100:.1f}%;background:{color};"></div></div>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Confusion matrix
-    st.subheader("📉 Model Confusion Matrix (Test Set)")
-    fig3, axes = plt.subplots(1, 2, figsize=(9, 3.5))
-    for idx, (model_name, preds) in enumerate([
-        ("XGBoost", xgb_model.predict(X_test)),
-        ("Logistic Regression", lr_model.predict(X_test_s))
-    ]):
-        cm = confusion_matrix(y_test, preds)
-        im = axes[idx].imshow(cm, cmap="Blues")
-        axes[idx].set_title(model_name, fontsize=11, fontweight="bold")
-        axes[idx].set_xlabel("Predicted", fontsize=9)
-        axes[idx].set_ylabel("Actual", fontsize=9)
-        axes[idx].set_xticks([0,1]); axes[idx].set_yticks([0,1])
-        axes[idx].set_xticklabels(["No Disease","Disease"], fontsize=8)
-        axes[idx].set_yticklabels(["No Disease","Disease"], fontsize=8)
-        for i in range(2):
-            for j in range(2):
-                axes[idx].text(j, i, str(cm[i,j]), ha="center", va="center",
-                               fontsize=14, fontweight="bold",
-                               color="white" if cm[i,j] > cm.max()/2 else "black")
-    plt.tight_layout()
-    st.pyplot(fig3)
-    plt.close()
+    with r2:
+        st.markdown('<p class="section-header">Feature Importance — XGBoost</p>', unsafe_allow_html=True)
+        imp = xgb_model.feature_importances_
+        fi  = pd.DataFrame({"Feature":[FEAT_LABELS[f] for f in features],"Importance":imp}).sort_values("Importance",ascending=True)
 
-    # Patient summary table
-    st.subheader("👤 Patient Input Summary")
-    summary = {
-        "Age": age, "Sex": sex, "Chest Pain": cp, "BP": f"{trestbps} mmHg",
-        "Cholesterol": f"{chol} mg/dL", "Fasting BS >120": fbs,
-        "ECG": restecg, "Max HR": thalch, "Exercise Angina": exang,
-        "ST Depression": oldpeak, "ST Slope": slope,
-        "Major Vessels": ca, "Thalassemia": thal
-    }
-    st.dataframe(pd.DataFrame(summary.items(), columns=["Parameter", "Value"]),
-                 use_container_width=True, hide_index=True)
+        fig2, ax = plt.subplots(figsize=(8, 4.8))
+        colors   = [RED if v > 0.09 else BLUE for v in fi["Importance"]]
+        bars     = ax.barh(fi["Feature"], fi["Importance"], color=colors, edgecolor="#0f172a", linewidth=1, height=0.62)
+        ax.set_xlabel("Importance Score", fontsize=10)
+        ax.set_title("Which features drive the prediction?", fontsize=11, fontweight="600", color="#e2e8f0", pad=10)
+        ax.axvline(x=0.09, color="#475569", linestyle="--", linewidth=0.8, alpha=0.7)
+        ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
+        ax.grid(axis="x", alpha=0.3)
+        for bar, val in zip(bars, fi["Importance"]):
+            ax.text(val+0.002, bar.get_y()+bar.get_height()/2, f"{val:.3f}", va="center", fontsize=8.5, color="#94a3b8")
+        p1 = mpatches.Patch(color=RED,  label="High importance (>9%)")
+        p2 = mpatches.Patch(color=BLUE, label="Standard importance")
+        ax.legend(handles=[p1,p2], fontsize=8, loc="lower right", framealpha=0.2)
+        plt.tight_layout()
+        st.pyplot(fig2, use_container_width=True)
+        plt.close()
+
+    st.markdown("<hr>", unsafe_allow_html=True)
+
+    # Bottom row: confusion matrix + patient table
+    b1, b2 = st.columns([1.2, 1])
+
+    with b1:
+        st.markdown('<p class="section-header">Confusion Matrix — Test Set</p>', unsafe_allow_html=True)
+        fig3, axes = plt.subplots(1, 2, figsize=(8, 3.2))
+        for i, (mname, preds) in enumerate([
+            ("XGBoost", xgb_model.predict(X_test)),
+            ("Logistic Regression", lr_model.predict(X_test_s))
+        ]):
+            cm = confusion_matrix(y_test, preds)
+            im = axes[i].imshow(cm, cmap="Blues", vmin=0)
+            axes[i].set_title(mname, fontsize=10, fontweight="600", color="#e2e8f0")
+            axes[i].set_xlabel("Predicted", fontsize=8, color="#94a3b8")
+            axes[i].set_ylabel("Actual", fontsize=8, color="#94a3b8")
+            axes[i].set_xticks([0,1]); axes[i].set_yticks([0,1])
+            axes[i].set_xticklabels(["No Disease","Disease"], fontsize=7.5)
+            axes[i].set_yticklabels(["No Disease","Disease"], fontsize=7.5)
+            for r in range(2):
+                for c in range(2):
+                    axes[i].text(c, r, str(cm[r,c]), ha="center", va="center",
+                                 fontsize=16, fontweight="700",
+                                 color="white" if cm[r,c] > cm.max()*0.5 else "#1e293b")
+        plt.tight_layout(pad=1.5)
+        st.pyplot(fig3, use_container_width=True)
+        plt.close()
+
+    with b2:
+        st.markdown('<p class="section-header">Patient Profile Summary</p>', unsafe_allow_html=True)
+        rows = [
+            ("Age", age), ("Sex", sex), ("Chest Pain", cp),
+            ("Resting BP", f"{trestbps} mmHg"), ("Cholesterol", f"{chol} mg/dL"),
+            ("Fasting BS >120", fbs), ("ECG", restecg),
+            ("Max Heart Rate", thalch), ("Exercise Angina", exang),
+            ("ST Depression", oldpeak), ("ST Slope", slope),
+            ("Major Vessels", ca), ("Thalassemia", thal),
+        ]
+        tbl = "".join(f"<tr><td><strong>{k}</strong></td><td>{v}</td></tr>" for k,v in rows)
+        st.markdown(f"""
+        <table class="summary-table">
+            <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody>{tbl}</tbody>
+        </table>
+        """, unsafe_allow_html=True)
 
 else:
-    # EDA section when no prediction yet
-    st.subheader("📈 Exploratory Data Analysis — Your UCI Dataset")
-    c1, c2 = st.columns(2)
-
-    with c1:
-        fig, ax = plt.subplots(figsize=(6, 4))
+    # EDA section
+    st.markdown('<p class="section-header">Exploratory Analysis</p>', unsafe_allow_html=True)
+    e1, e2 = st.columns(2)
+    with e1:
+        fig, ax = plt.subplots(figsize=(6.5, 3.8))
         cp_counts = df_raw.groupby(["cp","target"]).size().unstack(fill_value=0)
-        cp_counts.plot(kind="bar", ax=ax, color=["#3b82f6","#ef4444"], edgecolor="white", width=0.7)
-        ax.set_title("Chest Pain Type vs Disease Presence", fontsize=11, fontweight="bold")
-        ax.set_xlabel("Chest Pain Type", fontsize=9)
-        ax.set_ylabel("Count", fontsize=9)
-        ax.legend(["No Disease","Disease"], fontsize=8)
-        ax.tick_params(axis='x', rotation=20, labelsize=8)
+        cp_counts.plot(kind="bar", ax=ax, color=[BLUE, RED], edgecolor="#0f172a", linewidth=1.2, width=0.65)
+        ax.set_title("Chest Pain Type vs Disease Presence", fontsize=11, fontweight="600", color="#e2e8f0")
+        ax.set_xlabel(""); ax.set_ylabel("Patient Count", fontsize=9)
+        ax.legend(["No Disease","Disease"], fontsize=8, framealpha=0.2)
+        ax.tick_params(axis="x", rotation=15, labelsize=8)
+        ax.grid(axis="y", alpha=0.3)
         ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
-        plt.tight_layout(); st.pyplot(fig); plt.close()
-
-    with c2:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        d0 = df_raw[df_raw["target"]==0]["thalch"].dropna()
-        d1 = df_raw[df_raw["target"]==1]["thalch"].dropna()
-        ax.hist(d0, bins=20, alpha=0.6, color="#3b82f6", label="No Disease")
-        ax.hist(d1, bins=20, alpha=0.6, color="#ef4444", label="Disease")
-        ax.set_title("Max Heart Rate by Outcome", fontsize=11, fontweight="bold")
-        ax.set_xlabel("Max Heart Rate (bpm)", fontsize=9)
-        ax.set_ylabel("Count", fontsize=9)
-        ax.legend(fontsize=8)
+        plt.tight_layout(); st.pyplot(fig, use_container_width=True); plt.close()
+    with e2:
+        fig, ax = plt.subplots(figsize=(6.5, 3.8))
+        ax.hist(df_raw[df_raw["target"]==0]["thalch"].dropna(), bins=22, alpha=0.75, color=BLUE, label="No Disease")
+        ax.hist(df_raw[df_raw["target"]==1]["thalch"].dropna(), bins=22, alpha=0.75, color=RED, label="Disease")
+        ax.set_title("Max Heart Rate by Outcome", fontsize=11, fontweight="600", color="#e2e8f0")
+        ax.set_xlabel("Max Heart Rate (bpm)", fontsize=9); ax.set_ylabel("Count", fontsize=9)
+        ax.legend(fontsize=8, framealpha=0.2)
+        ax.grid(axis="y", alpha=0.3)
         ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
-        plt.tight_layout(); st.pyplot(fig); plt.close()
+        plt.tight_layout(); st.pyplot(fig, use_container_width=True); plt.close()
+    st.markdown("""
+    <div style='text-align:center; padding:20px; color:#475569; font-size:14px;'>
+        👈 &nbsp; Fill patient vitals in the sidebar and click <strong style='color:#60a5fa;'>Predict Cardiac Risk</strong>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("👈 Enter patient vitals in the sidebar and click **Predict Risk** to get a personalized risk score.")
-
-st.markdown("---")
-st.markdown(
-    "<p style='text-align:center;color:#6b7280;font-size:13px;'>"
-    "CardioRisk AI • XGBoost + Logistic Regression • UCI Heart Disease Dataset (920 patients) • "
-    "<b>For research & educational purposes only</b></p>",
-    unsafe_allow_html=True
-)
+# Footer
+st.markdown("""
+<div style='text-align:center; padding:20px 0 10px 0; border-top:1px solid #1e293b; margin-top:20px;'>
+    <span style='font-size:12px; color:#334155;'>
+        CardioRisk AI &nbsp;·&nbsp; XGBoost + Logistic Regression Ensemble &nbsp;·&nbsp;
+        UCI Heart Disease Dataset (920 patients) &nbsp;·&nbsp;
+        <strong style='color:#475569;'>For research & educational purposes only — not a medical device</strong>
+    </span>
+</div>
+""", unsafe_allow_html=True)
