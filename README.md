@@ -7,10 +7,11 @@ https://cardiorisk-ai-pk04.streamlit.app/
 
 ## 📁 Files
 ```
-heart_disease_app/
-├── app.py            ← Main Streamlit application
-├── requirements.txt  ← Python dependencies
-└── README.md         ← This file
+cardiorisk-ai/
+├── app.py                   ← Main Streamlit application
+├── requirements.txt         ← Python dependencies
+├── README.md                ← This file
+└── heart_disease_uci.csv    ← Dataset
 ```
 
 
