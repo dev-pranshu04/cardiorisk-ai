@@ -25,9 +25,9 @@ cardiorisk-ai/
 ### Models
 | Model | Role | AUC-ROC |
 |-------|------|---------|
-| XGBoost | Primary (65% weight) | ~0.88 |
-| Logistic Regression | Secondary (35% weight) | ~0.83 |
-| **Ensemble** | **Final prediction** | **~0.87** |
+| XGBoost | Primary (65% weight) | ~0.905 |
+| Logistic Regression | Secondary (35% weight) | ~0.895 |
+| **Ensemble** | **Final prediction** | **~0.882 (5-Fold CV AUC)** |
 
 ### Features Used
 | Feature | Description |
