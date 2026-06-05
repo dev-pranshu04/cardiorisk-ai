@@ -641,11 +641,72 @@ else:
 
 # Footer
 st.markdown("""
-<div style='text-align:center; padding:20px 0 10px 0; border-top:1px solid #1e293b; margin-top:20px;'>
-    <span style='font-size:12px; color:#334155;'>
-        CardioRisk AI &nbsp;·&nbsp; XGBoost + Logistic Regression Ensemble &nbsp;·&nbsp;
-        UCI Heart Disease Dataset (920 patients) &nbsp;·&nbsp;
-        <strong style='color:#475569;'>For research & educational purposes only — not a medical device</strong>
-    </span>
+<div style='margin-top:32px; border-top:1px solid #1e293b; padding-top:28px;'>
+
+    <!-- App credit line -->
+    <div style='text-align:center; margin-bottom:24px;'>
+        <span style='font-size:12px; color:#334155;'>
+            CardioRisk AI &nbsp;·&nbsp; XGBoost + Logistic Regression Ensemble &nbsp;·&nbsp;
+            UCI Heart Disease Dataset (920 patients) &nbsp;·&nbsp;
+            <strong style='color:#475569;'>For research & educational purposes only — not a medical device</strong>
+        </span>
+    </div>
+
+    <!-- Developer card -->
+    <div style='
+        max-width: 520px;
+        margin: 0 auto 20px auto;
+        background: linear-gradient(135deg, #0f172a, #0f2851);
+        border: 1px solid #1e3a8a;
+        border-radius: 16px;
+        padding: 24px 28px;
+        text-align: center;
+    '>
+        <div style='font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#3b82f6; margin-bottom:10px;'>Built by</div>
+        <div style='font-size:22px; font-weight:800; color:#e2e8f0; margin-bottom:4px; letter-spacing:-0.3px;'>Pranshu Kumar</div>
+        <div style='font-size:12px; color:#64748b; margin-bottom:20px;'>ML Engineer &nbsp;·&nbsp; Healthcare AI</div>
+
+        <div style='display:flex; justify-content:center; gap:12px; flex-wrap:wrap;'>
+
+            <a href='https://github.com/dev-pranshu04' target='_blank' style='
+                display:inline-flex; align-items:center; gap:7px;
+                background:#161b22; border:1px solid #30363d;
+                color:#e2e8f0; font-size:12px; font-weight:500;
+                padding:8px 16px; border-radius:8px; text-decoration:none;
+            '>
+                <svg width='15' height='15' viewBox='0 0 24 24' fill='#e2e8f0'>
+                    <path d='M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z'/>
+                </svg>
+                GitHub
+            </a>
+
+            <a href='https://www.linkedin.com/in/dev-pranshu' target='_blank' style='
+                display:inline-flex; align-items:center; gap:7px;
+                background:#0a66c2; border:1px solid #0a66c2;
+                color:white; font-size:12px; font-weight:500;
+                padding:8px 16px; border-radius:8px; text-decoration:none;
+            '>
+                <svg width='15' height='15' viewBox='0 0 24 24' fill='white'>
+                    <path d='M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.37V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.26 2.36 4.26 5.44v6.3zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z'/>
+                </svg>
+                LinkedIn
+            </a>
+
+            <a href='https://www.instagram.com/im_pranshu29/' target='_blank' style='
+                display:inline-flex; align-items:center; gap:7px;
+                background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+                border:none;
+                color:white; font-size:12px; font-weight:500;
+                padding:8px 16px; border-radius:8px; text-decoration:none;
+            '>
+                <svg width='15' height='15' viewBox='0 0 24 24' fill='white'>
+                    <path d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z'/>
+                </svg>
+                Instagram
+            </a>
+
+        </div>
+    </div>
+
 </div>
 """, unsafe_allow_html=True)
