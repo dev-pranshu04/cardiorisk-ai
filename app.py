@@ -640,8 +640,9 @@ else:
     """, unsafe_allow_html=True)
 
 # Footer
-st.markdown("""
-<div style='margin-top:32px; border-top:1px solid #1e293b; padding-top:28px;'>
+import streamlit.components.v1 as components
+components.html("""
+<div style='margin-top:32px; border-top:1px solid #1e293b; padding-top:28px; font-family: Inter, sans-serif;'>
 
     <!-- App credit line -->
     <div style='text-align:center; margin-bottom:24px;'>
@@ -709,4 +710,4 @@ st.markdown("""
     </div>
 
 </div>
-""", unsafe_allow_html=True)
+""", height=180)
