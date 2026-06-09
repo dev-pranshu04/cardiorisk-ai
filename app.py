@@ -444,12 +444,25 @@ n_patients = len(df_raw)
 # ─────────────────────────────────────────────────────────────────────────────
 # SIDEBAR
 # ─────────────────────────────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("""
-    st.image("assets/Cardiorisk_logo.png", width=120)
-        <div style='font-family:"Playfair Display",serif;font-size:16px;font-weight:700;color:#e2e8f0;'>CardioRisk AI</div>
-        <div style='font-size:9px;color:#1e3a5f;margin-top:3px;letter-spacing:2px;text-transform:uppercase;'>Clinical Input Panel</div>
-    </div>""", unsafe_allow_html=True)
+st.image("assets/Cardiorisk_logo.png", width=120)
+
+st.markdown("""
+<div style='text-align:center;'>
+    <div style='font-family:"Playfair Display",serif;
+                font-size:16px;
+                font-weight:700;
+                color:#e2e8f0;'>
+        CardioRisk AI
+    </div>
+    <div style='font-size:9px;
+                color:#1e3a5f;
+                margin-top:3px;
+                letter-spacing:2px;
+                text-transform:uppercase;'>
+        Clinical Input Panel
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:8px 0 6px;">Demographics</p>', unsafe_allow_html=True)
