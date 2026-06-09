@@ -36,11 +36,37 @@ st.set_page_config(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CUSTOM FAVICON INJECT (base64 — works on Streamlit Cloud)
+# CUSTOM FAVICON INJECT — JS override (beats Streamlit's own favicon)
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown(f'''<link rel="shortcut icon" href="{LOGO_URI}" type="image/png">
-<link rel="icon" href="{LOGO_URI}" type="image/png">
-''', unsafe_allow_html=True)
+st.markdown(f"""
+<script>
+(function() {{
+    const uri = "{LOGO_URI}";
+    function setFavicon() {{
+        // Remove all existing favicons
+        document.querySelectorAll("link[rel*='icon']").forEach(el => el.remove());
+        // Create new
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/png';
+        link.href = uri;
+        document.head.appendChild(link);
+        const shortcut = document.createElement('link');
+        shortcut.rel = 'shortcut icon';
+        shortcut.type = 'image/png';
+        shortcut.href = uri;
+        document.head.appendChild(shortcut);
+    }}
+    // Run immediately and again after Streamlit settles
+    setFavicon();
+    setTimeout(setFavicon, 500);
+    setTimeout(setFavicon, 1500);
+    // Also watch for DOM changes (Streamlit re-renders)
+    const obs = new MutationObserver(setFavicon);
+    obs.observe(document.head, {{ childList: true, subtree: false }});
+}})();
+</script>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # GLOBAL STYLES
@@ -515,13 +541,8 @@ def encode_input():
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <div class="hero-wrap">
-    <div style="display:flex;align-items:center;gap:20px;margin-bottom:18px;">
-        <img src="{LOGO_URI}" style="width:72px;height:72px;object-fit:contain;border-radius:16px;flex-shrink:0;">
-        <div>
-            <div class="hero-chip">Live · Inference Ready</div>
-            <h1 class="hero-title" style="margin-bottom:0;">CardioRisk <span>AI</span></h1>
-        </div>
-    </div>
+    <div class="hero-chip">Live · Inference Ready</div>
+    <h1 class="hero-title">CardioRisk <span>AI</span></h1>
     <p class="hero-sub">
         Ensemble ML system for cardiovascular disease risk stratification —
         combining XGBoost gradient boosting with Logistic Regression on the
