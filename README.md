@@ -4,7 +4,6 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.58-red)
 ![XGBoost](https://img.shields.io/badge/XGBoost-3.2-orange)
 ![AUC](https://img.shields.io/badge/AUC--ROC-0.915-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-yellow)
 
 **Pranshu Kumar · ML Engineer · Healthcare AI**
 [GitHub](https://github.com/dev-pranshu04) · [LinkedIn](https://www.linkedin.com/in/dev-pranshu) 
