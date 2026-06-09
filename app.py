@@ -541,7 +541,7 @@ def encode_input():
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <div class="hero-wrap">
-    <div class="hero-chip">Live · Inference Ready</div>
+    <div class="hero-chip">Live · Predict the Risk</div>
     <h1 class="hero-title">CardioRisk <span>AI</span></h1>
     <p class="hero-sub">
         Ensemble ML system for cardiovascular disease risk stratification —
