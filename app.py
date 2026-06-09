@@ -23,7 +23,7 @@ warnings.filterwarnings("ignore")
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="CardioRisk AI · Clinical Decision Support",
-    page_icon="🫀",
+    page_icon="assets/Cardiorisk_logo.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
