@@ -444,10 +444,9 @@ n_patients = len(df_raw)
 # ─────────────────────────────────────────────────────────────────────────────
 # SIDEBAR
 # ─────────────────────────────────────────────────────────────────────────────
-st.image("assets/Cardiorisk_logo.png", width=120)
-
 st.markdown("""
-<div style='text-align:center;'>
+<div style='text-align:center'>
+    <img src='assets/Cardiorisk_logo.png' width='120'>
     <div style='font-family:"Playfair Display",serif;
                 font-size:16px;
                 font-weight:700;
