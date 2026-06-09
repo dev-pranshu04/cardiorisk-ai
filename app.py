@@ -260,6 +260,18 @@ html, body, [class*="css"], .stApp {
 [data-testid="stSidebar"] {
     background: #04080e !important;
     border-right: 1px solid #0a1428 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+[data-testid="stSidebar"] > div:first-child {
+    overflow-y: auto !important;
+    height: 100vh !important;
+    padding-bottom: 60px !important;
+}
+[data-testid="stSidebarContent"] {
+    overflow-y: auto !important;
+    height: 100% !important;
+    padding-bottom: 60px !important;
 }
 [data-testid="stSidebar"] label {
     color: #334155 !important; font-size: 10px !important;
@@ -276,7 +288,14 @@ html, body, [class*="css"], .stApp {
     color: #94a3b8 !important;
 }
 
-/* ── Button ── */
+/* ── Sidebar compact spacing ── */
+[data-testid="stSidebar"] .stSlider { margin-bottom: 4px !important; padding-bottom: 0 !important; }
+[data-testid="stSidebar"] .stSelectbox { margin-bottom: 4px !important; }
+[data-testid="stSidebar"] .stRadio { margin-bottom: 4px !important; }
+[data-testid="stSidebar"] .stRadio > div { gap: 6px !important; }
+[data-testid="stSidebar"] .element-container { margin-bottom: 4px !important; }
+[data-testid="stSidebar"] .stMarkdown p { margin-bottom: 0 !important; }
+[data-testid="stSidebar"] hr { margin: 10px 0 !important; }
 .stButton > button {
     background: linear-gradient(135deg,#1d4ed8 0%,#2563eb 50%,#3b82f6 100%) !important;
     color: #fff !important; border: none !important;
@@ -427,28 +446,28 @@ n_patients = len(df_raw)
 # ─────────────────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
-    <div style='text-align:center;padding:20px 0 28px;'>
-        <div style='font-size:40px;margin-bottom:10px;'>🫀</div>
-        <div style='font-family:"Playfair Display",serif;font-size:18px;font-weight:700;color:#e2e8f0;'>CardioRisk AI</div>
-        <div style='font-size:9px;color:#1e3a5f;margin-top:4px;letter-spacing:2px;text-transform:uppercase;'>Clinical Input Panel</div>
+    <div style='text-align:center;padding:12px 0 16px;'>
+        <div style='font-size:34px;margin-bottom:6px;'>🫀</div>
+        <div style='font-family:"Playfair Display",serif;font-size:16px;font-weight:700;color:#e2e8f0;'>CardioRisk AI</div>
+        <div style='font-size:9px;color:#1e3a5f;margin-top:3px;letter-spacing:2px;text-transform:uppercase;'>Clinical Input Panel</div>
     </div>""", unsafe_allow_html=True)
 
     st.markdown("---")
-    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Demographics</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:8px 0 6px;">Demographics</p>', unsafe_allow_html=True)
     age     = st.slider("Age (years)", int(df_raw.age.min()), int(df_raw.age.max()), 54)
     sex     = st.selectbox("Biological Sex", ["Male","Female"])
 
-    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:12px 0 12px;">Symptoms</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:8px 0 6px;">Symptoms</p>', unsafe_allow_html=True)
     cp      = st.selectbox("Chest Pain Type", ["Asymptomatic","Typical Angina","Atypical Angina","Non-Anginal"])
     exang   = st.radio("Exercise-Induced Angina", ["No","Yes"], horizontal=True)
 
-    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:12px 0 12px;">Vitals & Labs</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:8px 0 6px;">Vitals & Labs</p>', unsafe_allow_html=True)
     trestbps = st.slider("Resting Blood Pressure (mmHg)", 90, 200, 130)
     chol     = st.slider("Serum Cholesterol (mg/dL)", 100, 600, 240)
     fbs      = st.radio("Fasting Blood Sugar > 120 mg/dL", ["No","Yes"], horizontal=True)
     thalch   = st.slider("Maximum Heart Rate (bpm)", 70, 210, 150)
 
-    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:12px 0 12px;">ECG & Imaging</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color:#1d4ed8;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:8px 0 6px;">ECG & Imaging</p>', unsafe_allow_html=True)
     restecg  = st.selectbox("Resting ECG Result", ["Normal","ST-T Abnormality","LV Hypertrophy"])
     oldpeak  = st.slider("ST Depression (Oldpeak)", 0.0, 6.5, 1.0, 0.1)
     slope    = st.selectbox("ST Slope", ["Upsloping","Flat","Downsloping"])
