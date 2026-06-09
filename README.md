@@ -1,4 +1,4 @@
-# CardioRisk AI — Project Case Study
+# [CardioRisk AI — Project Case Study] (https://cardiorisk-ai-pk04.streamlit.app/#cardio-risk-ai)
 
 **Pranshu Kumar · ML Engineer · Healthcare AI**
 [GitHub](https://github.com/dev-pranshu04) · [LinkedIn](https://www.linkedin.com/in/dev-pranshu)
