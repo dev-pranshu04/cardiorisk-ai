@@ -29,7 +29,7 @@ LOGO_URI  = f"data:image/png;base64,{LOGO_B64}"
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="CardioRisk AI · Clinical Decision Support",
-    page_icon="./Cardiorisk_logo.png" if __import__("os").path.exists("./Cardiorisk_logo.png") else "🫀",
+    page_icon="🫀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -459,9 +459,9 @@ n_patients = len(df_raw)
 # SIDEBAR
 # ─────────────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("""
+    st.markdown(f"""
     <div style='text-align:center;padding:12px 0 16px;'>
-        <img src=\'" + LOGO_URI + "\' style=\'width:64px;height:64px;object-fit:contain;margin-bottom:8px;border-radius:12px;\'>
+        <img src='{LOGO_URI}' style='width:64px;height:64px;object-fit:contain;margin-bottom:8px;border-radius:12px;'>
         <div style='font-family:"Playfair Display",serif;font-size:16px;font-weight:700;color:#e2e8f0;'>CardioRisk AI</div>
         <div style='font-size:9px;color:#1e3a5f;margin-top:3px;letter-spacing:2px;text-transform:uppercase;'>Clinical Input Panel</div>
     </div>""", unsafe_allow_html=True)
@@ -515,8 +515,13 @@ def encode_input():
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <div class="hero-wrap">
-    <div class="hero-chip">Live · Inference Ready</div>
-    <h1 class="hero-title">CardioRisk <span>AI</span></h1>
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:18px;">
+        <img src="{LOGO_URI}" style="width:72px;height:72px;object-fit:contain;border-radius:16px;flex-shrink:0;">
+        <div>
+            <div class="hero-chip">Live · Inference Ready</div>
+            <h1 class="hero-title" style="margin-bottom:0;">CardioRisk <span>AI</span></h1>
+        </div>
+    </div>
     <p class="hero-sub">
         Ensemble ML system for cardiovascular disease risk stratification —
         combining XGBoost gradient boosting with Logistic Regression on the
