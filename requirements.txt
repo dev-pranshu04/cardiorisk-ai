@@ -1,15 +1,15 @@
 # CardioRisk AI — pinned requirements (P1-2 fix)
 # Tested combination — do not change minor versions without re-running test suite.
 
-streamlit==1.45.1
-xgboost==2.1.4
-scikit-learn==1.6.1
-pandas==2.2.3
-numpy==1.26.4
-matplotlib==3.9.4
+streamlit>=1.45.1
+xgboost>=3.0.0
+scikit-learn>=1.7.2
+pandas>=2.2.3
+numpy>=2.1.0
+matplotlib>=3.9.4
 
 # Enables PDF report download
 reportlab==4.2.5
 
 # Enables SHAP waterfall explanations
-# shap==0.46.0
+shap==0.46.0
