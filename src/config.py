@@ -104,7 +104,7 @@ XGB_PARAMS = dict(
     gamma            = 0.1,
     reg_alpha        = 0.1,
     reg_lambda       = 1.0,
-    eval_metric      = "logloss",
+    # eval_metric moved to fit() in XGBoost 3.x
     random_state     = 42,
     verbosity        = 0,
     device           = "cpu",
