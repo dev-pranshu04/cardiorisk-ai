@@ -8,8 +8,8 @@ pandas==2.2.3
 numpy==1.26.4
 matplotlib==3.9.4
 
-# Optional — enables PDF report download
+# Enables PDF report download
 reportlab==4.2.5
 
-# Optional — enables SHAP waterfall explanations
+# Enables SHAP waterfall explanations
 # shap==0.46.0
