@@ -70,7 +70,7 @@ def render_eda_overview(df_raw, y):
         _strip_top_right(ax2)
 
         plt.tight_layout(pad=1.2)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -100,7 +100,7 @@ def render_feature_importance(xgb_model, feats, flabels):
         ax.legend(handles=[p1, p2], fontsize=8, framealpha=0.05,
                   loc="lower right", labelcolor=T2)
         plt.tight_layout(pad=1.2)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -122,7 +122,7 @@ def render_roc_curve(y_test, xgb_prob, lr_prob):
         ax.set_ylim(0, 1)
         _strip_top_right(ax)
         plt.tight_layout(pad=1.0)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -144,7 +144,7 @@ def render_pr_curve(y_test, xgb_prob, lr_prob):
         ax.set_ylim(0, 1)
         _strip_top_right(ax)
         plt.tight_layout(pad=1.0)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -165,7 +165,7 @@ def render_calibration_curve(y_test, xgb_prob, lr_prob):
         ax.set_ylim(0, 1)
         _strip_top_right(ax)
         plt.tight_layout(pad=1.0)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -188,7 +188,7 @@ def render_confusion_matrix(y_test, xgb_model, X_test):
                         fontsize=18, fontweight="700",
                         color="#fff" if cm[r, c] > thresh else T1)
         plt.tight_layout(pad=1.0)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -217,7 +217,7 @@ def render_threshold_sensitivity(y_test, xgb_prob_te):
         ax.set_ylim(0, 1.05)
         _strip_top_right(ax)
         plt.tight_layout(pad=0.8)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -242,7 +242,7 @@ def render_chest_pain_outcome(df_raw):
         ax.grid(axis="y", alpha=0.3)
         _strip_top_right(ax)
         plt.tight_layout(pad=1.2)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
 
@@ -261,6 +261,6 @@ def render_max_hr_outcome(df_raw):
         ax.grid(axis="y", alpha=0.3)
         _strip_top_right(ax)
         plt.tight_layout(pad=1.2)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
