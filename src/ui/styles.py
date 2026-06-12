@@ -12,7 +12,14 @@ def inject_global_styles() -> None:
 /* ── Reset & Base ── */
 html, body, [class*="css"], .stApp {
     font-family: 'DM Sans', sans-serif;
-    background: #040810 !important;
+    background-color: #040810 !important;
+}
+body {
+    background-image:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(29,78,216,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,165,233,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 60% at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 70%) !important;
+    background-attachment: fixed !important;
 }
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -21,16 +28,7 @@ html, body, [class*="css"], .stApp {
 ::-webkit-scrollbar-track { background: #080f1e; }
 ::-webkit-scrollbar-thumb { background: #1a3a6e; border-radius: 4px; }
 
-/* ── Background mesh ── */
-.stApp::before {
-    content: '';
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    background:
-        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(29,78,216,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,165,233,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse 40% 60% at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 70%);
-}
-.stApp > * { position: relative; z-index: 1; }
+/* ── Background mesh removed (was causing scroll lock via ::before on .stApp) ── */
 
 /* ── Hero ── */
 .hero-wrap {
