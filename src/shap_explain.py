@@ -48,6 +48,6 @@ def render_shap_waterfall(xgb_model, Xi_imp, flabels, feats):
             a.set_facecolor(BG2)
             a.tick_params(colors=T1)
         plt.tight_layout(pad=1.0)
-        st.pyplot(fig, width="stretch")
+        st.pyplot(fig, use_container_width=True)
     finally:
         plt.close(fig)
