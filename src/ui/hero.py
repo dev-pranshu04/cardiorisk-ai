@@ -15,7 +15,10 @@ def inject_favicon() -> None:
 <script>
 (function() {{
     const uri = "{LOGO_URI}";
+    let applying = false;
     function setFavicon() {{
+        if (applying) return;
+        applying = true;
         document.querySelectorAll("link[rel*='icon']").forEach(el => el.remove());
         const link = document.createElement('link');
         link.rel = 'icon';
@@ -27,12 +30,11 @@ def inject_favicon() -> None:
         shortcut.type = 'image/png';
         shortcut.href = uri;
         document.head.appendChild(shortcut);
+        setTimeout(() => {{ applying = false; }}, 0);
     }}
     setFavicon();
     setTimeout(setFavicon, 500);
     setTimeout(setFavicon, 1500);
-    const obs = new MutationObserver(setFavicon);
-    obs.observe(document.head, {{ childList: true, subtree: false }});
 }})();
 </script>
 """, unsafe_allow_html=True)
