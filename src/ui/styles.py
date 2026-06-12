@@ -29,7 +29,11 @@ body {
 ::-webkit-scrollbar-thumb { background: #1a3a6e; border-radius: 4px; }
 
 /* ── Background mesh removed (was causing scroll lock via ::before on .stApp) ── */
-
+/* ── Ensure main content area scrolls (Streamlit's real scroll container) ── */
+[data-testid="stAppViewContainer"] [data-testid="ScrollToBottomContainer"] {
+    overflow-y: auto !important;
+    height: 100vh !important;
+}
 /* ── Hero ── */
 .hero-wrap {
     background: linear-gradient(135deg, #06080f 0%, #0c1628 40%, #0e1e3f 100%);
