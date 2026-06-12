@@ -24,13 +24,21 @@ html, body, [class*="css"], .stApp {
 /* ── Background mesh ── */
 .stApp::before {
     content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
     background:
         radial-gradient(ellipse 80% 50% at 20% 0%, rgba(29,78,216,0.12) 0%, transparent 60%),
         radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,165,233,0.08) 0%, transparent 50%),
         radial-gradient(ellipse 40% 60% at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 70%);
 }
 .stApp > * { position: relative; z-index: 1; }
+
+/* ── Ensure main view scrolls ── */
+[data-testid="stAppViewContainer"] {
+    overflow-y: auto !important;
+}
+[data-testid="stAppViewContainer"] > .main {
+    overflow-y: auto !important;
+}
 
 /* ── Hero ── */
 .hero-wrap {
@@ -245,6 +253,27 @@ html, body, [class*="css"], .stApp {
 }
 [data-testid="stSidebar"] .stSlider > div > div > div {
     background: #1d4ed8 !important;
+}
+/* Slider min/max range labels — replace solid blue blocks with subtle tags */
+[data-testid="stSidebar"] .stSlider [data-testid="stSliderTickBarMin"],
+[data-testid="stSidebar"] .stSlider [data-testid="stSliderTickBarMax"] {
+    background: transparent !important;
+    color: #334155 !important;
+    font-size: 10px !important;
+    font-family: 'DM Mono', monospace !important;
+    font-weight: 500 !important;
+    padding: 0 !important;
+}
+/* Current value bubble shown above the slider thumb */
+[data-testid="stSidebar"] .stSlider [data-testid="stThumbValue"] {
+    background: #0f1f3a !important;
+    color: #93c5fd !important;
+    border: 1px solid #1d4ed8 !important;
+    border-radius: 6px !important;
+    font-family: 'DM Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    padding: 2px 8px !important;
 }
 [data-testid="stSidebar"] .stSelectbox > div > div {
     background: #070d1c !important;
