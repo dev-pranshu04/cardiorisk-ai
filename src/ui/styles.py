@@ -32,14 +32,6 @@ html, body, [class*="css"], .stApp {
 }
 .stApp > * { position: relative; z-index: 1; }
 
-/* ── Ensure main view scrolls ── */
-[data-testid="stAppViewContainer"] {
-    overflow-y: auto !important;
-}
-[data-testid="stAppViewContainer"] > .main {
-    overflow-y: auto !important;
-}
-
 /* ── Hero ── */
 .hero-wrap {
     background: linear-gradient(135deg, #06080f 0%, #0c1628 40%, #0e1e3f 100%);
@@ -242,8 +234,17 @@ html, body, [class*="css"], .stApp {
 [data-testid="stSidebar"] {
     background: #04080e !important;
     border-right: 1px solid #0a1428 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+[data-testid="stSidebar"] > div:first-child {
+    overflow-y: auto !important;
+    height: 100vh !important;
+    padding-bottom: 60px !important;
 }
 [data-testid="stSidebarContent"] {
+    overflow-y: auto !important;
+    height: 100% !important;
     padding-bottom: 60px !important;
 }
 [data-testid="stSidebar"] label {
