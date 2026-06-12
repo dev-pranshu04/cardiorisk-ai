@@ -55,7 +55,7 @@ def render_pdf_download(result: dict, models: dict) -> None:
         data=pdf_bytes,
         file_name="cardiorisk_report.pdf",
         mime="application/pdf",
-        width="stretch",
+        use_container_width=True,
     )
 
 
