@@ -1,5 +1,6 @@
 """
 Model registry panel + EDA dashboard row (top-of-page, always visible).
+MOBILE FIX: 3-column desktop grid replaced with st.tabs — works on all screen sizes.
 """
 import streamlit as st
 
@@ -13,10 +14,10 @@ def render_model_registry(xgb_auc, cv_auc, xgb_ap, lr_auc, lr_ap) -> None:
     <div class="model-card primary">
         <div class="model-tag">
             <span class="model-name">XGBoost v2</span>
-            <span class="model-badge">PRIMARY \u00b7 65%</span>
+            <span class="model-badge">PRIMARY &middot; 65%</span>
         </div>
         <div class="model-auc">{xgb_auc:.3f}</div>
-        <div class="model-meta">AUC \u00b7 CV={cv_auc:.3f} \u00b7 AP={xgb_ap:.3f}</div>
+        <div class="model-meta">AUC &middot; CV={cv_auc:.3f} &middot; AP={xgb_ap:.3f}</div>
     </div>
     <div class="model-card">
         <div class="model-tag">
@@ -24,7 +25,7 @@ def render_model_registry(xgb_auc, cv_auc, xgb_ap, lr_auc, lr_ap) -> None:
             <span style="font-size:9px;color:#1e3a5f;">35%</span>
         </div>
         <div class="model-auc" style="font-size:26px;">{lr_auc:.3f}</div>
-        <div class="model-meta">AUC \u00b7 AP={lr_ap:.3f} \u00b7 Interpretable</div>
+        <div class="model-meta">AUC &middot; AP={lr_ap:.3f} &middot; Interpretable</div>
     </div>""", unsafe_allow_html=True)
 
     st.markdown('<p class="sec-hd" style="margin-top:20px;">Ensemble Strategy</p>', unsafe_allow_html=True)
@@ -64,19 +65,21 @@ def render_clinical_guide() -> None:
 
 
 def render_dashboard_row(models: dict) -> None:
-    c1, c2, c3 = st.columns([1, 1.75, 1])
+    # MOBILE FIX: replaced st.columns([1, 1.75, 1]) with tabs
+    # Tabs stack nicely on mobile; columns caused horizontal overflow
+    tab1, tab2, tab3 = st.tabs(["📊 Models", "📈 EDA", "📋 Guide"])
 
-    with c1:
+    with tab1:
         render_model_registry(
             models["xgb_auc"], models["cv_auc"], models["xgb_ap"],
             models["lr_auc"], models["lr_ap"],
         )
 
-    with c2:
+    with tab2:
         st.markdown('<p class="sec-hd">Exploratory Data Analysis</p>', unsafe_allow_html=True)
         render_eda_overview(models["df_raw"], models["y"])
 
-    with c3:
+    with tab3:
         render_clinical_guide()
 
     st.markdown("<hr>", unsafe_allow_html=True)
