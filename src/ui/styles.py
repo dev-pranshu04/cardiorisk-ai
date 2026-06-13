@@ -1,5 +1,6 @@
 """
 Global CSS injection for the CardioRisk AI dashboard.
+MOBILE FIX: Added responsive media queries for phones/tablets.
 """
 import streamlit as st
 
@@ -28,12 +29,11 @@ body {
 ::-webkit-scrollbar-track { background: #080f1e; }
 ::-webkit-scrollbar-thumb { background: #1a3a6e; border-radius: 4px; }
 
-/* ── Background mesh removed (was causing scroll lock via ::before on .stApp) ── */
-/* ── Ensure main content area scrolls (Streamlit's real scroll container) ── */
 [data-testid="stAppViewContainer"] [data-testid="ScrollToBottomContainer"] {
     overflow-y: auto !important;
     height: 100vh !important;
 }
+
 /* ── Hero ── */
 .hero-wrap {
     background: linear-gradient(135deg, #06080f 0%, #0c1628 40%, #0e1e3f 100%);
@@ -257,7 +257,6 @@ body {
 [data-testid="stSidebar"] .stSlider > div > div > div {
     background: #1d4ed8 !important;
 }
-/* Slider min/max range labels — replace solid blue blocks with subtle tags */
 [data-testid="stSidebar"] .stSlider [data-testid="stSliderTickBarMin"],
 [data-testid="stSidebar"] .stSlider [data-testid="stSliderTickBarMax"] {
     background: transparent !important;
@@ -267,7 +266,6 @@ body {
     font-weight: 500 !important;
     padding: 0 !important;
 }
-/* Current value bubble shown above the slider thumb */
 [data-testid="stSidebar"] .stSlider [data-testid="stThumbValue"] {
     background: #0f1f3a !important;
     color: #93c5fd !important;
@@ -321,5 +319,84 @@ hr { border: none !important; border-top: 1px solid #0a1428 !important; margin: 
     font-family: 'DM Mono', monospace; font-size: 11px; color: #475569;
 }
 .metric-chip strong { color: #60a5fa; font-weight: 500; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE FIXES
+   Screens smaller than 768px (all phones, small tablets)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* Hero — shrink text so it fits */
+    .hero-wrap {
+        padding: 24px 20px !important;
+        border-radius: 16px !important;
+        margin-bottom: 20px !important;
+    }
+    .hero-title {
+        font-size: 28px !important;
+        letter-spacing: 0 !important;
+    }
+    .hero-sub {
+        font-size: 12px !important;
+    }
+    .hero-meta {
+        gap: 14px !important;
+        margin-top: 16px !important;
+    }
+    .hero-stat-val {
+        font-size: 15px !important;
+    }
+
+    /* KPI strip — 2 columns instead of 4 */
+    .kpi-row {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 20px !important;
+    }
+    .kpi-card {
+        padding: 16px !important;
+    }
+    .kpi-val {
+        font-size: 22px !important;
+    }
+    .kpi-lbl {
+        font-size: 9px !important;
+    }
+
+    /* Risk display — smaller number */
+    .risk-pct {
+        font-size: 48px !important;
+    }
+    .risk-display {
+        padding: 24px 20px !important;
+    }
+
+    /* Model cards */
+    .model-card {
+        padding: 14px 16px !important;
+    }
+    .model-auc {
+        font-size: 26px !important;
+    }
+
+    /* Patient table — scrollable horizontally */
+    .ptable-wrap {
+        overflow-x: auto !important;
+    }
+}
+
+/* Extra small phones (iPhone SE, etc) */
+@media (max-width: 400px) {
+    .hero-title {
+        font-size: 22px !important;
+    }
+    .kpi-val {
+        font-size: 18px !important;
+    }
+    .risk-pct {
+        font-size: 40px !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
